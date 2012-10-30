@@ -11,7 +11,7 @@
 #
 
 # Variables
-sortie="/mnt/master/vidéo/" # Dossier de sortie par défaut
+sortie="$HOME/" # Dossier de sortie par défaut
 # ---
 VERSION=0.01
 icone="--window-icon=/usr/share/icons/wgetz.svg"
