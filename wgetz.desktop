@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=wgetz
+GenericName=wgetz
+Comment=Interface graphique minimale pour wget utilisant zenity.
+Exec=wgetz
+Icon=/usr/share/icons/wgetz.svg
+TryExec=wgetz
+Type=Application
+Categories=Network;FileTransfer;GTK;

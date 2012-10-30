@@ -1,0 +1,49 @@
+#!/bin/sh
+#
+# Interface graphique minimale pour wget utilisant zenity.
+# BoboTiG, le 16 janvier 2012.
+#
+# Dépendances :
+#    aptitude install zenity (indispensable)
+#    aptitude install xclip  (optionnel)
+#
+# Usage : wgetz [<url>]
+#
+
+# Variables
+sortie="/mnt/master/vidéo/" # Dossier de sortie par défaut
+# ---
+VERSION=0.01
+icone="--window-icon=/usr/share/icons/wgetz.svg"
+taille="--width=480 --height=100"
+options="${icone} ${taille}"
+firefox="Mozilla/5.0 (X11; Linux x86_64; rv:8.0) Gecko/20100101 Firefox/8.0 Iceweasel/8.0"
+texte="Il faudrait me donner un lien :"
+
+# Fonction principale
+telecharger() {
+	#sed "s/^.* \+\([0-9]\+%\) \+\([0-9.]\+[GMKB]\) \+\([0-9hms.]\+\).*$/\1\n# Téléchargement en cours... \2\/s (\3)/"
+	wget -c --progress=dot -U "${firefox}" -O "${sortie}" "${url}" 2>&1 | while read ligne; do
+		sed "s/^.* \+\([0-9]\+%\) \+\([0-9.]\+[GMKB]\) \+\([0-9hms.]\+\).*$/\1\n# Téléchargement en cours... \2\/s/" | \
+		sed -e "s/G/\ Gio/" -e "s/M/\ Mio/" -e "s/K/\ Kio/" -e "s/B/\ o/" | \
+		zenity ${options} --title "wgetz \"${fichier}\" [v${VERSION}]" --progress
+	done
+}
+
+# C'est parti mon kiki...
+[ ! -x "/usr/bin/zenity" ] && ( echo " ! zenity n'est pas installé." ; exit 1 )
+[ -n "$@" ] && ( url="$1" ; texte="Est-ce le bon lien ?" )
+if test -z "${url}" && test -x "/usr/bin/xclip" ; then
+	url="$(xclip -o -select c)"
+	texte="Est-ce le bon lien ?"
+fi
+url=$(zenity ${options} --title "wgetz v${VERSION}" --entry --text "${texte}" --entry-text="${url}")
+fichier=$(basename "${url}" | cut -d"?" -f 1 | sed 'y/+/ / ; s/%/\\x/g')
+fichier=$(echo -e "${fichier}")
+echo $fichier
+exit
+[ -n ${sortie} ] && cd "${sortie}"
+sortie=$(zenity ${icone} --title "wgetz ${VERSION}" --file-selection --save --filename="${fichier}" --confirm-overwrite)
+fichier=$(basename "${sortie}")
+telecharger
+exit 0

@@ -1,4 +1,4 @@
 wgetz
 =====
 
-Interface minimale pour wget utilisant zenity
+Interface minimale pour wget utilisant zenity.
